@@ -12,4 +12,12 @@ class HourRent extends Rent
 
         parent::__construct($attributes);
     }
+
+    function getRentToDate(\DateTime $date, int $duration)
+    {
+        $date->add(new \DateInterval("P{$duration}H"));
+
+        return $date->format('Y-m-d H:i:s');
+    }
+
 }

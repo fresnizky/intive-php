@@ -12,4 +12,11 @@ class DayRent extends Rent
 
         parent::__construct($attributes);
     }
+
+    function getRentToDate(\DateTime $date, int $duration)
+    {
+        $date->add(new \DateInterval("P{$duration}D"));
+
+        return $date->format('Y-m-d H:i:s');
+    }
 }

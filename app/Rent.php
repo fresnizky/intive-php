@@ -15,10 +15,23 @@ abstract class Rent extends Model
     protected $price_cents;
     protected $max_duration;
 
+    abstract function getRentToDate(\DateTime $date, int $duration);
+
     public function __construct(array $attributes = [])
     {
         $this->validateClass();
         parent::__construct($attributes);
+    }
+
+    /**
+     * Validates rent duration
+     *
+     * @param $duration
+     * @return bool
+     */
+    protected function validateDuration($duration)
+    {
+        return $duration <= $this->max_duration;
     }
 
     /**
@@ -33,12 +46,15 @@ abstract class Rent extends Model
             throw new \Exception('Maximum duration for this rent type exceeded.');
         }
 
+        $currentDate = new \DateTime();
 
-    }
+        $this->rent_from = $currentDate->format('Y-m-d H:i:s');
+        $this->rent_to = $this->getRentToDate($currentDate, $duration);
+        $this->base_price = $this->price_cents * $duration;
+        $this->discount = 0;
+        $this->total_price = $this->base_price - $this->discount;
 
-    protected function validateDuration($duration)
-    {
-        return $duration <= $this->max_duration;
+        // $this->save() this is disabled because there's no database
     }
 
     /**
