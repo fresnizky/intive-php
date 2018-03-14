@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Rent;
+use App\Factories\RentFactory;
 use PHPUnit\Framework\TestCase;
 
 
@@ -24,6 +25,14 @@ class RentTest extends TestCase
     {
         $this->expectExceptionMessage('Duration not set for class: App\Rent');
         new InvalidRentClassNoDuration();
+    }
+
+    public function testExceededDurationThrowsException()
+    {
+        $rent = RentFactory::get('Day');
+
+        $this->expectExceptionMessage('Maximum duration for this rent type exceeded.');
+        $rent->rent(20);
     }
 }
 

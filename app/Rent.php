@@ -22,6 +22,26 @@ abstract class Rent extends Model
     }
 
     /**
+     * Rent a bike for a specified duration
+     *
+     * @param int $duration
+     * @throws \Exception
+     */
+    public function rent($duration)
+    {
+        if (!$this->validateDuration($duration)) {
+            throw new \Exception('Maximum duration for this rent type exceeded.');
+        }
+
+
+    }
+
+    protected function validateDuration($duration)
+    {
+        return $duration <= $this->max_duration;
+    }
+
+    /**
      * Validate child class has defined the required properties.
      *
      * @throws \Exception
