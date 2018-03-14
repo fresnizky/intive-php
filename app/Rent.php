@@ -10,6 +10,10 @@ abstract class Rent extends Model
     const DAY_TYPE = 'Day';
     const WEEK_TYPE = 'Week';
 
+    const FAMILY_RENT_MIN = 3;
+    const FAMILY_RENT_MAX = 5;
+    const FAMILY_RENT_DISCOUNT = 30;
+
     protected $table = 'rents';
     protected $type;
     protected $price_cents;
@@ -24,14 +28,26 @@ abstract class Rent extends Model
     }
 
     /**
-     * Validates rent duration
-     *
-     * @param $duration
-     * @return bool
+     * @param int $quantity Number of bikes to rent.
+     * @param string $type Type of rent (Hour, Day, Week).
+     * @param int $duration Duration in number of hours, days or weeks.
+     * @throws \Exception
      */
-    protected function validateDuration($duration)
+    public function familyRent(int $quantity, int $duration)
     {
-        return $duration <= $this->max_duration;
+        if ($quantity <= self::FAMILY_RENT_MIN
+            || $quantity >= self::FAMILY_RENT_MAX) {
+
+            throw new \Exception('Number of bikes must be between 3 and 5 for Family Rent.');
+        }
+
+        if (!$this->validateDuration($duration)) {
+            throw new \Exception('Maximum duration for this rent type exceeded.');
+        }
+
+        for ($i = 0; $i < $quantity; $i++) {
+            $this->rent($duration, self::FAMILY_RENT_DISCOUNT);
+        }
     }
 
     /**
@@ -56,6 +72,17 @@ abstract class Rent extends Model
         $this->total_price = $this->base_price - $this->discount;
 
         // $this->save() this is disabled because there's no database
+    }
+
+    /**
+     * Validates rent duration
+     *
+     * @param $duration
+     * @return bool
+     */
+    protected function validateDuration($duration)
+    {
+        return $duration <= $this->max_duration;
     }
 
     /**

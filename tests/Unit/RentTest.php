@@ -67,6 +67,22 @@ class RentTest extends TestCase
         $this->assertEquals(0, $rent->discount);
         $this->assertEquals(12000, $rent->total_price);
     }
+
+    public function testFamilyRentWithInvalidQuantityThrowsException()
+    {
+        $rent = RentFactory::get('Hour');
+
+        $this->expectExceptionMessage('Number of bikes must be between 3 and 5 for Family Rent.');
+        $rent->familyRent(1, 10);
+    }
+
+    public function testFamilyRentWithInvalidDurationThrowsException()
+    {
+        $rent = RentFactory::get('Hour');
+
+        $this->expectExceptionMessage('Maximum duration for this rent type exceeded.');
+        $rent->familyRent(4, 30);
+    }
 }
 
 class InvalidRentClassNoType extends Rent
