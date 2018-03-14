@@ -37,10 +37,11 @@ abstract class Rent extends Model
     /**
      * Rent a bike for a specified duration
      *
-     * @param int $duration
+     * @param int $duration Duration in number of hours, days or weeks.
+     * @param int $discount Discount percentage.
      * @throws \Exception
      */
-    public function rent($duration)
+    public function rent($duration, $discount = 0)
     {
         if (!$this->validateDuration($duration)) {
             throw new \Exception('Maximum duration for this rent type exceeded.');
@@ -51,7 +52,7 @@ abstract class Rent extends Model
         $this->rent_from = $currentDate->format('Y-m-d H:i:s');
         $this->rent_to = $this->getRentToDate($currentDate, $duration);
         $this->base_price = $this->price_cents * $duration;
-        $this->discount = 0;
+        $this->discount = $discount;
         $this->total_price = $this->base_price - $this->discount;
 
         // $this->save() this is disabled because there's no database

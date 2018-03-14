@@ -15,9 +15,8 @@ class HourRent extends Rent
 
     function getRentToDate(\DateTime $date, int $duration)
     {
-        $date->add(new \DateInterval("P{$duration}H"));
+        $date->add(new \DateInterval("PT{$duration}H"));
 
         return $date->format('Y-m-d H:i:s');
     }
-
 }
