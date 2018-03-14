@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use App\DayRent;
+use App\HourRent;
 use App\Rent;
 use App\Factories\RentFactory;
 use PHPUnit\Framework\TestCase;
@@ -68,6 +70,16 @@ class RentTest extends TestCase
         $this->assertEquals(12000, $rent->total_price);
     }
 
+    public function testRentWithDiscount() {
+        $rent = RentFactory::get('Week');
+
+        $rent->rent('2', 20);
+
+        $this->assertEquals(12000, $rent->base_price);
+        $this->assertEquals(2400, $rent->discount);
+        $this->assertEquals(9600, $rent->total_price);
+    }
+
     public function testFamilyRentWithInvalidQuantityThrowsException()
     {
         $rent = RentFactory::get('Hour');
@@ -82,6 +94,19 @@ class RentTest extends TestCase
 
         $this->expectExceptionMessage('Maximum duration for this rent type exceeded.');
         $rent->familyRent(4, 30);
+    }
+
+    public function testFamilyRent()
+    {
+        $mock = $this->getMockBuilder(HourRent::class)
+            ->setMethods(['rent'])
+            ->getMock();
+
+        $mock->expects($this->exactly(4))
+            ->method('rent')
+            ->with(10, 30);
+
+        $mock->familyRent(4, 10);
     }
 }
 

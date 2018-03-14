@@ -68,7 +68,7 @@ abstract class Rent extends Model
         $this->rent_from = $currentDate->format('Y-m-d H:i:s');
         $this->rent_to = $this->getRentToDate($currentDate, $duration);
         $this->base_price = $this->price_cents * $duration;
-        $this->discount = $discount;
+        $this->discount = $this->base_price * $discount / 100;
         $this->total_price = $this->base_price - $this->discount;
 
         // $this->save() this is disabled because there's no database
